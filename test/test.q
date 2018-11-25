@@ -101,3 +101,21 @@ test_no_missing_pos: {board:: test_pre_def;
                       ex: `long$(); ac: missing_pos[get_row[9]]; :ex~ac
                      }
 
+
+is_conflict: {[v;r;c] if[v in get_col[c]; :1b];
+                      if[v in raze get_grid[(r;c)]; :1b];
+                      :0b
+             }
+
+test_is_conflict_existing_val_in_row: {board:: test_pre_def;
+                                       ex: 1b; ac: is_conflict[4;2;3]; :ex~ac
+                                      }
+
+test_is_conflict_existing_val_in_grid: {board:: test_pre_def;
+                                        ex: 1b; ac: is_conflict[2;2;3]; :ex~ac
+                                      }
+
+test_is_conflict_no_existing_val_in_grid_or_col: {board:: test_pre_def;
+                                                  ex: 0b; ac: is_conflict[1;2;3]; :ex~ac
+                                      }
+

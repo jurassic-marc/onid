@@ -34,3 +34,8 @@ missing_pos: {$[GRID_SIZE=count x;
                ]
              }
 
+is_conflict: {[v;r;c] if[v in get_col[c]; :1b];
+                      if[v in raze get_grid[(r;c)]; :1b];
+                      :0b
+             }
+

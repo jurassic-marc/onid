@@ -1,41 +1,198 @@
 \c 30 2000
 
-BOARD_SIZE: `int$9;
- GRID_SIZE: `int$sqrt BOARD_SIZE;  //3
-    DIGITS: 1+til BOARD_SIZE;
-
 board: ((7;8;1;3;4;5;2;9;6);(0;0;0;1;2;6;5;8;7);(6;2;5;8;7;9;1;4;3);
         (5;6;7;2;8;4;3;1;9);(8;1;9;5;3;7;4;6;2);(4;3;2;6;9;1;8;7;5);
         (0;5;6;7;1;8;9;2;4);(2;9;8;4;6;3;7;5;1);(1;7;4;9;5;2;6;3;8))
 
 
-get_row: {board[x-1]}
-get_col: {(flip board)[x-1]}
+test_log: {[iss;r;v;c] show (`$string(iss)), (`$string(r),":"), (`$string(v)),
+                       (`$"@"), `$string(c)
+          }
 
-get_grid: {$[1=count x; get_grid_by_grid_number[x]; get_grid_by_row_col[x]]}
+/
+get_board_size - function which returns the board size from the given board
 
-get_grid_by_grid_number: {[g] x:floor((g-1)%GRID_SIZE); y:(g-1)mod GRID_SIZE;
-                              :flip(flip board[(GRID_SIZE*x)+til GRID_SIZE])[(GRID_SIZE*y)+til GRID_SIZE]
+@param b: list of listed numbers representing the board
+
+@returns: list of two numbers representing the board's row and column sizes
+
+@example: get_grid_size[9 cut 1+til 81]
+\
+
+
+get_board_size: {[b] :`long$(count b;first count b)}
+
+
+/
+get_grid_size - function which returns the grid size from the given board
+
+@param b: list of listed numbers representing the board
+
+@returns: list of two numbers representing the grid's row and column sizes
+
+@example: get_grid_size[9 cut 1+til 81]
+\
+
+
+get_grid_size: {[b] :`long$sqrt each get_board_size[b]}
+
+
+/
+get_digits - function which returns the Sudoku values for a given board
+
+@param b: list of listed numbers representing the board
+
+@returns: list of numbers representing the valid Sudoku values for the board
+
+@example: get_digits[9 cut 1+til 81]
+\
+
+
+get_digits: {[b] :1+til first get_board_size[b]}
+
+
+/
+get_row - function which takes a number atom and returns that row from the board
+
+@param b: list of listed numbers representing the board
+@param r: atom number representing the row number
+
+@returns: list of numbers which is the row
+
+@example: get_row[9 cut 1+til 81;4]
+\
+
+
+get_row: {[b;r] :b[r-1]}
+
+
+/
+get_col - function which takes a number atom and returns that column from the board
+
+@param b: list of listed numbers representing the board
+@param c: atom number representing the column number
+
+@returns: list of numbers which is the column
+
+@example: get_col[9 cut 1+til 81;8]
+\
+
+
+get_col: {[b;c] :(flip b)[c-1]}
+
+
+/
+get_grid - function which decides which function to call to get the grid depending on the input
+
+@param b: list of listed numbers representing the board
+@param x: atom number which is the grid number
+          list of two numbers which is an x,y co-ord
+
+@returns: list of listed numbers which is a grid
+
+@example: get_grid[3]
+@example: get_grid[(2;8)]
+\
+
+
+get_grid: {[b;x] $[1=count x; 
+                   get_grid_by_grid_number[b;x];
+                   get_grid_by_row_col[b;x]
+                  ]}
+
+
+/
+get_grid_by_grid_number - function which returns the grid specified by the its grid number
+
+@param b: list of listed numbers representing the board
+@param g: atom number which is the grid number
+
+@returns: list of listed numbers which is a grid
+
+@example: get_grid_by_grid_number[9 cut 1+til 81;7]
+\
+
+
+get_grid_by_grid_number: {[b;g] r:floor(g-1)%r_size:get_grid_size[b][0]; 
+                                c:(g-1)mod c_size:get_grid_size[b][1];
+                                :flip(flip b[(r_size*r)+til r_size])[(c_size*c)+til c_size]
                          }
 
-get_grid_by_row_col: {r:x 0; c:x 1; r:1+3*floor((r-1)%3); c:floor((c-1)%3);
-                      :get_grid_by_grid_number[r+c]
+
+/
+get_grid_by_row_col - function which returns the grid that the specified x,y co-ord is contaned in
+
+@param b: list of listed numbers representing the board
+@param x: list of two numbers which is the x and y co-ord
+
+@returns: list of listed numbers which is a grid
+
+@example: get_grid_by_row_col[9 cut 1+til 81;(5;8)]
+\
+
+
+get_grid_by_row_col: {[b;co_ord] r:co_ord[0]-1; c:co_ord[1]-1; g_s:get_grid_size[b];
+                                 r:1+g_s[0]*floor(r)%g_s[0]; c:floor(c)%g_s[1];
+                                 :get_grid_by_grid_number[b;r+c]
                      }
 
-missing_vals: {$[GRID_SIZE=count x;
-                 :DIGITS[where not DIGITS in raze x];
-                 :DIGITS[where not DIGITS in x]
-                ]
+/
+missing_vals - function which returns the missing Sudoku values from an inputed list
+
+@param b: list of listed numbers representing the board
+@param x: list of numbers representing the row or column
+          list of listed numbers representing the grid
+
+@returns: list of numbers which are the missing Sudoku values for the input
+
+@example: missing_vals(9 cut 1+til 81;(3;0;8;7;1;2;0;0;5))
+@example: missing_vals(9 cut 1+til 81;(7;0;9);(0;0;1);(5;4;0))
+\
+
+
+missing_vals: {[b;x] digits: get_digits[b];
+                     $[get_grid_size[b][0]=count x;
+                       :digits[where not digits in raze x];
+                       :digits[where not digits in x]
+                      ]
               }
+ 
 
-missing_pos: {$[GRID_SIZE=count x;
-                :1+where not (raze x) in DIGITS;
-                :1+where not x in DIGITS
-               ]
+/
+missing_pos - function which returns the position of the missing Sudoku values from an inputed list
+
+@param b: list of listed numbers representing the board
+@param x: list of numbers representing the row or column
+          list of listed numbers representing the grid
+
+@returns: list of numbers which are the positions of the missing Sudoku values for the input
+
+@example: missing_pos(9 cut 1+til 81;(3;0;8;7;1;2;0;0;5))
+@example: missing_pos(9 cut 1+til 81;(7;0;9);(0;0;1);(5;4;0))
+\
+
+
+missing_pos: {[b;x] digits: get_digits[b];
+                    $[(count x)=(get_grid_size[b])[0];
+                      :1+where not (raze x) in digits;
+                      :1+where not x in digits
+                     ]
              }
 
-is_conflict: {[v;r;c] if[v in get_col[c]; :1b];
-                      if[v in raze get_grid[(r;c)]; :1b];
-                      :0b
-             }
+
+/
+is_conflict - function which returns a boolean determining if the value is allowable in the cell
+
+@param r: list of numbers representing the row
+@param c: list of numbers representing the column
+@param g: list of listed numbers representing the grid
+@param v: atom number representing the value in question
+
+@retuns: boolean whether the value is contained within the row, column or grid at that position
+
+@example: is_conflict[get_row[board;5];get_col[board;3];get_grid[board;4];7]
+\
+
+
+is_conflict: {[r;c;g;v] $[(v in r)|(v in c)|v in raze g; :1b; :0b]}
 

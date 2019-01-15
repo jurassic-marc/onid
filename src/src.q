@@ -245,11 +245,83 @@ is_last_cand_val - function which returns a boolean determining if the inputted 
 is_last_cand_val: {:all x >= y}
 
 
+/
+is_row_complete - function which determines whether the row is solved
+
+@param r: list of listed numbers representing the row
+
+@returns: boolean whether the has any zeros
+
+@example: is_row_complete[(3;2;1;7;6;9;0;8;4)]
+\
+
+
+is_row_complete: {[r] $[any r=0; :0b; :1b]}
+
+
+/
+get_rows_with_zero - function which gets the rows of the inputted board needing to be solved
+
+@param b: list of listed numbers representing the board
+
+@returns: list of numbers which are the row numbers to be solved
+
+@example: get_rows_with_zero[9 cut 1+til 81]
+\
+
+
+get_rows_with_zero: {[b] :1+where any each 0=get_row[b;]each 1+til get_board_size[b][0]}
+
+
+/
+next_row_start - function which returns the column number of the first null value for the row
+
+@param b: list of listed values representing the board
+@param r: atom number representing the row number
+
+@returns: atom number which is the column value of the first zero for the row
+\
+
+
+next_row_start: {[b;r] :missing_pos[b;r][0]}
+
+
+/
+is_board_complete - function which determines whether the board is solved
+
+@param b: list of listed numbers representing the board
+@param r_s: list of numbers which is the rows needing solved
+@param r: list of numbers representing the row
+
+@returns: whether the board is complete and the next row
+
+@example: is_board_complete[9 cut 1+til 81;(6;7;8;9);7]
+@example: is_board_complete[9 cut 1+til 81;(6;7;8;9);9]
+\
+
+
+is_board_complete: {[b;r_s;r] $[r=last r_s; :(1b;()); :(0b;next_val_in_list[r;r_s;`p])]}
+
+
+/
+terminate - function which stops operation and displays the board given to it
+
+@param b: list of listed values representing the board
+
+@returns: show board
+
+@example: terminate[9 cut 1+til 81]
+\
+
+
+terminate: {[b] show "-------------------------------"; :show b}
+
+
 try_again: {[b;r;c;cand_r;cand_v;v_s;c_s] 
              test_log[`con;r;cand_v;c];
 
              $[is_last_cand_val[cand_v;v_s];
-               test_log[`bt;r;`;`];
+               :bt[b;r;c;cand_r;v_s;c_s];
                :ft[b;r;c;cand_r;v_s;c_s]
               ];
            }
@@ -259,7 +331,12 @@ try_next: {[b;r_s;c_s;r;c;cand_r;cand_v]
            test_log[`no_con;r;cand_v;c];
            b[r-1]:cand_r;
 
-           c:next_val_in_list[c;c_s;`p]; 
+           $[is_row_complete[cand_r];
+             (c:next_row_start[b;cand_r]; cand_r:get_row[b;r]; r:last cond
+              if[first cond:is_board_complete[b;r_s;r]; :terminate[b]]
+             );
+             c:next_val_in_list[c;c_s;`p]
+            ];
 
            :ft[b;r;c;cand_r;missing_vals[b;cand_r];missing_pos[b;cand_r]];
           }
@@ -270,7 +347,17 @@ ft: {[b;r;c;cand_r;v_s;c_s] cand_v:next_val_in_list[cand_r[c-1];v_s;`p];
                             
                             $[is_conflict[get_row[b;r];get_col[b;c];get_grid[b;(r;c)];cand_v];
                              try_again[b;r;c;cand_r;cand_v;v_s;c_s];
-                             try_next[b;r;c_s;r;c;cand_r;cand_v] /r rather than w/ 0s - r_s
+                             try_next[b;get_rows_with_zero[board];c_s;r;c;cand_r;cand_v]
                             ];
    }
+
+bt: {[b;r;c;cand_r;v_s;c_s] test_log[`bt;r;last v_s;c];
+                            cand_r[c-1]:0; b[r-1;c-1]:0;
+                            v_s:missing_vals[b;cand_r];
+                            all_c:missing_pos[board;get_row[board;r]];
+                            cand_c:missing_pos[b;cand_r];
+                            c_s:all_c[(-1+min i),i:where all_c in cand_c];
+                            c:min c_s;
+                            :ft[b;r;c;cand_r;v_s;c_s]
+    }
 

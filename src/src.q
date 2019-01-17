@@ -1,8 +1,8 @@
 \c 30 2000
 
-board: ((7;8;1;3;4;5;2;9;6);(0;0;0;1;2;6;5;8;7);(6;2;5;8;7;9;1;4;3);
-        (5;6;7;2;8;4;3;1;9);(8;1;9;5;3;7;4;6;2);(4;3;2;6;9;1;8;7;5);
-        (0;5;6;7;1;8;9;2;4);(2;9;8;4;6;3;7;5;1);(1;7;4;9;5;2;6;3;8))
+board: ((0;0;0;0;0;5;0;0;0);(2;5;1;0;0;0;4;6;0);(0;0;0;4;0;0;1;3;5);
+        (5;1;2;0;6;0;0;7;4);(0;0;6;0;8;0;9;0;0);(8;4;0;0;7;0;3;5;6);
+        (1;8;7;0;0;3;0;0;0);(0;3;5;0;0;0;7;1;9);(0;0;0;1;0;0;0;0;0))
 
 
 test_log: {[iss;r;v;c] show (`$string(iss)), (`$string(r),":"), (`$string(v)),
@@ -260,6 +260,23 @@ is_row_complete: {[r] $[any r=0; :0b; :1b]}
 
 
 /
+is_row_invalid - function which determies whether the row is solveable with the current config
+
+@param b: list of listed numbers representing the board
+@param r: atom number representing the row number
+@param c: atom number representing the column number
+
+@returns: boolean whether the cell
+
+@example: is_row_invalid[9 cut 1+til 81;3;8]
+\
+
+
+is_row_invalid: {[b;r;c] :(0N=1+last where 0=(c-1)#get_row[b;r];r_s[last where r>r_s:get_rows_with_zero[b]])
+                }
+
+
+/
 get_rows_with_zero - function which gets the rows of the inputted board needing to be solved
 
 @param b: list of listed numbers representing the board
@@ -304,6 +321,24 @@ is_board_complete: {[b;r_s;r] $[r=last r_s; :(1b;()); :(0b;next_val_in_list[r;r_
 
 
 /
+is_board_invalid - function which determines whether the board is unsolveable
+
+@param b: list of listed numbers representing the board
+@param r: atom number representing the row number
+@param c: atom number representing the column number
+
+@returns: boolean which states whether the board is unsolveable
+
+@example: is_board_invalid[9 cut 1+til 81;2;1]
+\
+
+
+is_board_invalid: {[b;r;c] :(c=min 1+where 0=get_row[b;r])&r=min 1+get_row[b;r]where any each 0=get_row[b;]each 1+til first get_board_size[b]
+                  }
+
+/
+
+
 terminate - function which stops operation and displays the board given to it
 
 @param b: list of listed values representing the board
@@ -351,7 +386,15 @@ ft: {[b;r;c;cand_r;v_s;c_s] cand_v:next_val_in_list[cand_r[c-1];v_s;`p];
                             ];
    }
 
-bt: {[b;r;c;cand_r;v_s;c_s] test_log[`bt;r;last v_s;c];
+bt: {[b;r;c;cand_r;v_s;c_s] if[is_board_invalid[board;r;c]; terminate[b]];
+                            
+                            if[first cond:is_row_invalid[board;r;c];
+                               b[r-1]:board[r-1];
+                               r:last cond;
+                               :bt_row[board;b;r]
+                              ];
+
+                            test_log[`bt;r;last v_s;c];
                             cand_r[c-1]:0; b[r-1;c-1]:0;
                             v_s:missing_vals[b;cand_r];
                             all_c:missing_pos[board;get_row[board;r]];

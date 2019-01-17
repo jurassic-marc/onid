@@ -196,3 +196,81 @@ is_conflict - function which returns a boolean determining if the value is allow
 
 is_conflict: {[r;c;g;v] $[(v in r)|(v in c)|v in raze g; :1b; :0b]}
 
+
+/
+next_val_in_list - function which returns the next largest value in a list in comparison to the value given
+
+@param v: atom number which is the value under consideration
+@param l: list of numbers which represents the number pool
+@param m: symbol denoting wether it is next largest or smallest value to be returrned
+
+@returns: the first value either side of the value given
+          0N if none exist
+
+@example: next_val_in_list[3;(1;3;5);`p]
+@example: next_val_in_list[5;(1;3;5);`n]
+\
+
+next_val_in_list: {[v;l;m] if[m=`p; :l[first where l>v]];
+                           if[m=`n; :l[first where l<v]];
+                  };
+
+
+/
+is_cand_val_invalid - function which determines whether the value is the last potential
+
+@param cand_v: atom number which is the candidate value
+
+@returns: whether the candidate value is the last for the row
+
+@example: is_cand_val_invalid[8]
+\
+
+
+is_cand_val_invalid: {[cand_v] :(0N=cand_v)}
+
+
+/
+is_last_cand_val - function which returns a boolean determining if the inputted value is the last candidate value for the inputted list of numbers
+
+@param x: list of numbers which are the candidate values for the cell
+@param y: atom number which is under consideration
+
+@returns: boolean whether the candidate value is the last value for consideration
+
+@example: is_last_cand_val[(3;5;7);7]
+\
+
+
+is_last_cand_val: {:all x >= y}
+
+
+try_again: {[b;r;c;cand_r;cand_v;v_s;c_s] 
+             test_log[`con;r;cand_v;c];
+
+             $[is_last_cand_val[cand_v;v_s];
+               test_log[`bt;r;`;`];
+               :ft[b;r;c;cand_r;v_s;c_s]
+              ];
+           }
+
+
+try_next: {[b;r_s;c_s;r;c;cand_r;cand_v]
+           test_log[`no_con;r;cand_v;c];
+           b[r-1]:cand_r;
+
+           c:next_val_in_list[c;c_s;`p]; 
+
+           :ft[b;r;c;cand_r;missing_vals[b;cand_r];missing_pos[b;cand_r]];
+          }
+
+
+ft: {[b;r;c;cand_r;v_s;c_s] cand_v:next_val_in_list[cand_r[c-1];v_s;`p];
+                            cand_r[c-1]:cand_v;
+                            
+                            $[is_conflict[get_row[b;r];get_col[b;c];get_grid[b;(r;c)];cand_v];
+                             try_again[b;r;c;cand_r;cand_v;v_s;c_s];
+                             try_next[b;r;c_s;r;c;cand_r;cand_v] /r rather than w/ 0s - r_s
+                            ];
+   }
+

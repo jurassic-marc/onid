@@ -1,10 +1,5 @@
 \c 30 2000
 
-board: ((0;0;0;0;0;5;0;0;0);(2;5;1;0;0;0;4;6;0);(0;0;0;4;0;0;1;3;5);
-        (5;1;2;0;6;0;0;7;4);(0;0;6;0;8;0;9;0;0);(8;4;0;0;7;0;3;5;6);
-        (1;8;7;0;0;3;0;0;0);(0;3;5;0;0;0;7;1;9);(0;0;0;1;0;0;0;0;0))
-
-
 test_log: {[iss;r;v;c] show (`$string(iss)), (`$string(r),":"), (`$string(v)),
                        (`$"@"), `$string(c)
           }
@@ -333,8 +328,7 @@ is_board_invalid - function which determines whether the board is unsolveable
 \
 
 
-is_board_invalid: {[b;r;c] :(c=min 1+where 0=get_row[b;r])&r=min 1+get_row[b;r]where any each 0=get_row[b;]each 1+til first get_board_size[b]
-                  }
+is_board_invalid: {[b;r;c] :(c=min 1+where 0=get_row[b;r])&r=min get_rows_with_zero[b]}
 
 
 /
@@ -362,7 +356,7 @@ try_again - function which adjusts the
 @param v_s: list of numbers which is the missing values for the row
 @param c_s: list of numbers which is the positions of the missing values
 
-@returns: calls ft with adjusted values
+@returns: calls init with adjusted values
 
 @example: try_again[9 cut 1+til 81;4;3;(8;0;0;0;1;0;2;3;5);6;(4;7;9);(2;3;4;6)]
 \
@@ -372,7 +366,7 @@ try_again: {[b;r;c;cand_r;cand_v;v_s;c_s]
 
              $[is_last_cand_val[cand_v;v_s];
                :bt[b;r;c;cand_r;v_s;c_s];
-               :ft[b;r;c;cand_r;v_s;c_s]
+               :init[b;r;c;cand_r;v_s;c_s]
               ];
            }
 
@@ -388,7 +382,7 @@ try_next - function which adjusts the values and trys to solve
 @param v_s: list of numbers which is the missing values for the row
 @param c_s: list of numbers which is the positions of the missing values
 
-@returns: calls ft with adjusted values
+@returns: calls init with adjusted values
 
 @example: try_next[9 cut 1+til 81;4;3;(8;0;0;0;1;0;2;3;5);6;(4;7;9);(2;3;4;6)]
 \
@@ -405,12 +399,12 @@ try_next: {[b;r_s;c_s;r;c;cand_r;cand_v]
              c:next_val_in_list[c;c_s;`p]
             ];
 
-           :ft[b;r;c;cand_r;missing_vals[b;cand_r];missing_pos[b;cand_r]];
+           :init[b;r;c;cand_r;missing_vals[b;cand_r];missing_pos[b;cand_r]];
           }
 
 
 /
-ft - function which is the initial function into the solver
+init - function which is the initial function into the solver
 
 @param b: list of listed numbers representing the board
 @param r: atom number representing the row number
@@ -419,17 +413,18 @@ ft - function which is the initial function into the solver
 @param v_s: list of numbers which is the missing values for the row
 @param c_s: list of numbers which is the positions of the missing values
 
-@example: ft[9 cut 1+til 81;2;4;(3;0;4;0;0;9;8;0;0);(1;2;5;6;7);(2;4;5;8;9)]
+@example: init[9 cut 1+til 81;2;4;(3;0;4;0;0;9;8;0;0);(1;2;5;6;7);(2;4;5;8;9)]
 \
 
 
-ft: {[b;r;c;cand_r;v_s;c_s] cand_v:next_val_in_list[cand_r[c-1];v_s;`p];
-                            cand_r[c-1]:cand_v;
-                            
-                            $[is_conflict[get_row[b;r];get_col[b;c];get_grid[b;(r;c)];cand_v];
-                             try_again[b;r;c;cand_r;cand_v;v_s;c_s];
-                             try_next[b;get_rows_with_zero[board];c_s;r;c;cand_r;cand_v]
-                            ];
+init: {[b;r;c;cand_r;v_s;c_s] if[is_cand_val_invalid[cand_v:next_val_in_list[cand_r[c-1];v_s;`p]];
+                                 :bt[b;r;c;cand_r;v_s;c_s]];
+                              
+                              cand_r[c-1]:cand_v;
+                              $[is_conflict[get_row[b;r];get_col[b;c];get_grid[b;(r;c)];cand_v];
+                                try_again[b;r;c;cand_r;cand_v;v_s;c_s];
+                                try_next[b;get_rows_with_zero[board];c_s;r;c;cand_r;cand_v]
+                               ];
    }
 
 
@@ -443,7 +438,7 @@ bt - function which adjusts the values for backtracking
 @param v_s: list of numbers which is the missing values for the row
 @param c_s: list of numbers which is the positions of the missing vals
 
-@returns: calls bt_row or ft with adjusted values
+@returns: calls bt_row or init with adjusted values
 
 @example: bt[9 cut 1+til 81;2;3;(2;1;3;7;0;9;8;0;0);(4;5;6);(5;8;9)]
 \
@@ -464,7 +459,7 @@ bt: {[b;r;c;cand_r;v_s;c_s] if[is_board_invalid[board;r;c]; terminate[b]];
                             cand_c:missing_pos[b;cand_r];
                             c_s:all_c[(-1+min i),i:where all_c in cand_c];
                             c:min c_s;
-                            :ft[b;r;c;cand_r;v_s;c_s]
+                            :init[b;r;c;cand_r;v_s;c_s]
     }
 
 
@@ -475,7 +470,7 @@ bt_row - function which returns to the previous row for backtracking
 @param up_b: list of listed numbers representing the updated board
 @param r: atom number representing the row number
 
-@returns: calls ft with adjusted values
+@returns: calls init with adjusted values
 
 @example: bt_row[9 cut 1+til 81;9 cut 1+til 81;3]
 \
@@ -483,11 +478,25 @@ bt_row - function which returns to the previous row for backtracking
 
 bt_row: {[b;up_b;r] test_log[`prev_row;r;();()];
                     c_s:missing_pos[b;get_row[b;r]];
-                    v_s:enlist b[r-1;-1+last c_s]; //last val
+                    v_s:enlist up_b[r-1;-1+last c_s]; //last val
                     c:last -1_c_s; //2nd last
                     up_b[r-1;-1+last c_s]:0;
-                    :ft[up_b;r;c;get_row[up_b;r];v_s;reverse c_s]
+                    :init[up_b;r;c;get_row[up_b;r];v_s;reverse c_s]
         }
 
 
+/
+solve_sudoku - function which solves the board passed to it
 
+@param b: list of listed numbers representing the board
+
+@returns: calls the function to recursively solve the board
+
+@example: solve_sudoku[9 cut 1+til 81]
+\
+
+
+solve_sudoku: {[b] board::b; r_s:get_rows_with_zero[b]; r:r_s[0]; cand_r:get_row[b;r];
+                   v_s:missing_vals[b;cand_r]; c_s:missing_pos[b;cand_r];
+                   :init[b;r;first c_s;cand_r;v_s;c_s]
+              }

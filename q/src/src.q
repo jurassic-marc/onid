@@ -1,5 +1,7 @@
 \c 30 2000
 
+mnip_d:get `:data/mnip_dict;
+
 test_log: {[iss;r;v;c] show (`$string(iss)), (`$string(r),":"), (`$string(v)),
                        (`$"@"), `$string(c)
           }
@@ -255,7 +257,7 @@ is_row_complete: {[r] $[any r=0; :0b; :1b]}
 
 
 /
-is_row_invalid - function which determies whether the row is solveable with the current config
+is_bt_row_needed - function which determies whether the algo needs to backtrack to the previous row
 
 @param b: list of listed numbers representing the board
 @param r: atom number representing the row number
@@ -263,11 +265,11 @@ is_row_invalid - function which determies whether the row is solveable with the 
 
 @returns: boolean whether the cell
 
-@example: is_row_invalid[<SUDOKU BOARD>;3;8]
+@example: is_bt_row_needed[<SUDOKU BOARD>;3;8]
 \
 
 
-is_row_invalid: {[b;r;c] :(0N=1+last where 0=(c-1)#get_row[b;r];r_s[last where r>r_s:get_rows_with_zero[b]])
+is_bt_row_needed: {[b;r;c] :(0N=1+last where 0=(c-1)#get_row[b;r];r_s[last where r>r_s:get_rows_with_zero[b]])
                 }
 
 
@@ -286,18 +288,18 @@ get_rows_with_zero: {[b] :1+where any each 0=get_row[b;]each 1+til get_board_siz
 
 
 /
-next_row_start - function which returns the column number of the first null value for the row
+get_row_start - function which returns the column number of the first null value for the row
 
 @param b: list of listed values representing the board
 @param r: atom number representing the row number
 
 @returns: atom number which is the column value of the first zero for the row
 
-@example: next_row_start[<SUDOKU BOARD>;4]
+@example: get_row_start[<SUDOKU BOARD>;4]
 \
 
 
-next_row_start: {[b;r] :missing_pos[b;r][0]}
+get_row_start: {[b;r] :missing_pos[b;r][0]}
 
 
 /
@@ -305,9 +307,9 @@ is_board_complete - function which determines whether the board is solved
 
 @param b: list of listed numbers representing the board
 @param r_s: list of numbers which is the rows needing solved
-@param r: list of numbers representing the row
+@param r: number representing the current row
 
-@returns: whether the board is complete and the next row
+@returns: list containing a boolean to state that the board is complete and the next row
 
 @example: is_board_complete[<SUDOKU BOARD>;(6;7;8;9);7]
 @example: is_board_complete[<SUDOKU BOARD>;(6;7;8;9);9]
@@ -360,7 +362,7 @@ terminate - function which stops operation and displays the board given to it
 
 @param b: list of listed values representing the board
 @param comp: boolean flag to say whether the board was solved or not
-@param mnip_r: list of functions that manipuate the board to its orginal orietattion
+@param mnip_r: list of functions that manipuate the board to the given orientation and its inverse
 
 @returns: list containing whether the board was solved and the board
 
@@ -372,7 +374,7 @@ terminate: {[b;comp;mnip_r] :(comp;mnip_r[1] b)}
 
 
 /
-try_again - function which adjusts the ~
+try_again - function which tries th next candidate value for the cell
 
 @param b: list of listed numbers representing the board
 @param r: atom number representing the row number
@@ -381,7 +383,9 @@ try_again - function which adjusts the ~
 @param cand_v: list of numbers which is the candidate value
 @param v_s: list of numbers which is the missing values for the row
 @param c_s: list of numbers which is the positions of the missing values
-@param mnip_r: list of functions that manipuate the board to its orginal orietattion
+@param mnip_r: list of functions that manipuate the board to the given orientati
+on and its inverse
+
 
 @returns: calls init with adjusted values
 
@@ -397,7 +401,7 @@ try_again: {[b;r;c;cand_r;cand_v;v_s;c_s;mnip_r]
            }
 
 /
-try_next - function which adjusts the values and trys to solve ~
+try_next - function which moves onto the next cell and tries to solve
 
 @param b: list of listed numbers representing the board
 @param r: atom number representing the row number
@@ -406,7 +410,9 @@ try_next - function which adjusts the values and trys to solve ~
 @param cand_v: list of numbers which is the candidate value
 @param v_s: list of numbers which is the missing values for the row
 @param c_s: list of numbers which is the positions of the missing values
-@param mnip_r: list of functions that manipuate the board to its orginal orietattion
+@param mnip_r: list of functions that manipuate the board to the given orientati
+on and its inverse
+
 
 @returns: calls init with adjusted values
 
@@ -416,10 +422,10 @@ try_next - function which adjusts the values and trys to solve ~
 
 try_next: {[b;r_s;c_s;r;c;cand_r;cand_v;mnip_r]
            test_log[`no_con;r;cand_v;c];
-           [r-1]:cand_r;
+           b[r-1]:cand_r;
 
            $[is_row_complete[cand_r];
-             (c:next_row_start[b;cand_r]; cand_r:get_row[b;r]; r:last cond
+             (c:get_row_start[b;cand_r]; cand_r:get_row[b;r]; r:last cond
               if[first cond:is_board_complete[b;r_s;r]; :terminate[b;1b;mnip_r]]
              );
              c:next_val_in_list[c;c_s;`p]
@@ -437,7 +443,9 @@ init - function which is the initial function into the solver
 @param cand_r: list of numbers which is the current row
 @param v_s: list of numbers which is the missing values for the row
 @param c_s: list of numbers which is the positions of the missing values
-@param mnip_r: list of functions that manipuate the board to its orginal orietattion
+@param mnip_r: list of functions that manipuate the board to the given orientati
+on and its inverse
+
 
 @returns: a varient to the supplied board
 
@@ -467,7 +475,9 @@ bt - function which adjusts the values for backtracking
 @param cand_r: list of numbers which is the current row
 @param v_s: list of numbers which is the missing values for the row
 @param c_s: list of numbers which is the positions of the missing vals
-@param mnip_r: list of functions that manipuate the board to its orginal orietattion
+@param mnip_r: list of functions that manipuate the board to the given orientati
+on and its inverse
+
 
 @returns: calls bt_row or init with adjusted values
 
@@ -477,7 +487,7 @@ bt - function which adjusts the values for backtracking
 bt: {[b;r;c;cand_r;v_s;c_s;mnip_r]
      if[is_board_invalid[board;r;c]; :terminate[b;0b;mnip_r]];
 
-     if[first cond:is_row_invalid[board;r;c];
+     if[first cond:is_bt_row_needed[board;r;c];
         b[r-1]:board[r-1]; r:last cond;
         :bt_row[board;b;r;mnip_r]
        ];
@@ -499,7 +509,9 @@ bt_row - function which returns to the previous row for backtracking
 @param b: list of listed numbers representing the original board
 @param up_b: list of listed numbers representing the updated board
 @param r: atom number representing the row number
-@param mnip_r: list of functions that manipuate the board to its orginal orietattion
+@param mnip_r: list of functions that manipuate the board to the given orientati
+on and its inverse
+
 
 @returns: calls init with adjusted values
 
@@ -521,7 +533,9 @@ bt_row: {[b;up_b;r;mnip_r]
 solve_board - funtion which checks whether the initial board is invalid before calling init
 
 @param b: list of listed numbers representing the original board
-@param mnip_r: list of functions that manipuate the board to its orginal orietattion
+@param mnip_r: list of functions that manipuate the board to the given orientati
+on and its inverse
+
 
 @returns: calls init with adjusted values
 
@@ -541,7 +555,8 @@ solve_board: {[b;mnip_r] board::b;
 try_solve - function which tries to solve the board given its orientation
 
 @param b: list of listed numbers representing the original board
-@param mnip_d: list of functions that manipuate the board to its orginal orietattion
+@param mnip_r: list of functions that manipuate the board to the given orientati
+on and its inverse
 @param orient: symbol to denote which orientation of the board is tried
 
 @returns: list of whether the board is solved or nul if a stack error occurs
@@ -550,7 +565,7 @@ try_solve - function which tries to solve the board given its orientation
 \
 
 
-try_solve: {[b;mnip_d;orient]
+try_solve: {[b;mnip_r;orient]
             mnip_r:mnip_d[orient]; b:mnip_r[0] b;
             :.[solve_board;(b;mnip_r);{::}];
            }
@@ -574,5 +589,5 @@ Qsolve_sudoku: {[b;mnip_d]
                 if[0=count res; :last res];
                 if[1b=first res; :last res];
                 :last res
-               }[;mnip]
+               }[;mnip_d]
 

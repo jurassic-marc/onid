@@ -1,10 +1,9 @@
-\c 30 2000
+\1 /home/marc/git/onid/q/log/app.log
+\2 /home/marc/git/onid/q/log/app.err
 
 mnip_d:get `:data/mnip_dict;
 
-test_log: {[iss;r;v;c] show (`$string(iss)), (`$string(r),":"), (`$string(v)),
-                       (`$"@"), `$string(c)
-          }
+.log4q.fm: "%d:%t %f [%c]: %m\r\n";
 
 /
 get_board_size - function which returns the board size from the given board
@@ -370,7 +369,7 @@ terminate - function which stops operation and displays the board given to it
 \
 
 
-terminate: {[b;comp;mnip_r] :(comp;mnip_r[1] b)}
+terminate: {[b;comp;mnip_r] DEBUG "Terminating..."; :(comp;mnip_r[1] b)}
 
 
 /
@@ -393,11 +392,11 @@ on and its inverse
 \
 
 try_again: {[b;r;c;cand_r;cand_v;v_s;c_s;mnip_r]
-            test_log[`con;r;cand_v;c]; 
+            WARN "CON    | (",(string r),",",(string c),") VAL: ",string cand_v; 
             $[is_last_cand_val[cand_v;v_s];
-               :bt[b;r;c;cand_r;v_s;c_s;mnip_r];
-               :init[b;r;c;cand_r;v_s;c_s;mnip_r]
-              ];
+              :bt[b;r;c;cand_r;v_s;c_s;mnip_r];
+              :init[b;r;c;cand_r;v_s;c_s;mnip_r]
+             ];
            }
 
 /
@@ -421,7 +420,7 @@ on and its inverse
 
 
 try_next: {[b;r_s;c_s;r;c;cand_r;cand_v;mnip_r]
-           test_log[`no_con;r;cand_v;c];
+           INFO "NO CON | (",(string r),",",(string c),") VAL: ",string cand_v;
            b[r-1]:cand_r;
 
            $[is_row_complete[cand_r];
@@ -454,6 +453,7 @@ on and its inverse
 
 
 init: {[b;r;c;cand_r;v_s;c_s;mnip_r]
+       DEBUG "Init called"; 
        if[is_cand_val_invalid[cand_v:next_val_in_list[cand_r[c-1];v_s;`p]];
                               :bt[b;r;c;cand_r;v_s;c_s;mnip_r]
          ];
@@ -492,7 +492,7 @@ bt: {[b;r;c;cand_r;v_s;c_s;mnip_r]
         :bt_row[board;b;r;mnip_r]
        ];
 
-     test_log[`bt;r;last v_s;c];
+     WARN "BT     | (",(string r),",",(string c),")";
      cand_r[c-1]:0; b[r-1;c-1]:0;
      v_s:missing_vals[b;cand_r];
      all_c:missing_pos[board;get_row[board;r]];
@@ -520,7 +520,7 @@ on and its inverse
 
 
 bt_row: {[b;up_b;r;mnip_r]
-         test_log[`prev_row;r;();()];
+         WARN "BT ROW | ",string r;
          c_s:missing_pos[b;get_row[b;r]];
          v_s:enlist up_b[r-1;-1+last c_s]; //last val
          c:last -1_c_s; //2nd last
@@ -566,6 +566,7 @@ on and its inverse
 
 
 try_solve: {[b;mnip_r;orient]
+            INFO "Trying to solve for ",string orient;
             mnip_r:mnip_d[orient]; b:mnip_r[0] b;
             :.[solve_board;(b;mnip_r);{::}];
            }
@@ -586,8 +587,8 @@ Qsolve_sudoku: {[b;mnip_d]
                 res: try_solve[b;mnip_d;] each key mnip_d;
                 res: first res[where 0h=type each res];
 
-                if[0=count res; :last res];
-                if[1b=first res; :last res];
-                :last res
+                if[0=count res; ERROR "Stack issue: ",string res; :last res];
+                if[1b=first res; DEBUG "Solved matrix: ",string res; :last res];
+                :DEBUG "Solved matrix: ",string res; last res
                }[;mnip_d]
 

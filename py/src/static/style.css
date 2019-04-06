@@ -12,9 +12,52 @@
   background: #2e4e;
 }
 
+.play_bar {
+  display: grid;
+  grid-template-columns: 9fr 2fr;
+}
+
+.number_bar ul {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-column-gap: 1em;
+}
+
 .puzzle_area {
   display: grid;
   grid-template-columns: 1fr 9fr 1fr;
   align-items: center;
   justify-items: center;
+}
+
+.puzzle {
+  display: flex;
+  flex-direction: column;
+  min-width: 400px;
+  min-height: 400px;
+  align-items: center;
+  justify-content: center;
+}
+
+.puzzle input {
+  height: 35px;
+  width: 35px;
+  margin: -2px;
+  padding: 5px;
+  box-sizing: border-box;
+  text-align: center;
+  border: 1px solid #000;
+}
+
+.puzzle input[name="top"] {
+  border-top: 3px solid #000;
+}
+
+.puzzle input[name="rgt"] {
+  border-right: 3px solid #000;
+}
+
+.puzzle input[name="top rgt"] {
+  border-top: 3px solid #000;
+  border-right: 3px solid #000;
 }

@@ -1,0 +1,20 @@
+
+.container {
+  display: grid;
+}
+
+.container>div {
+  background: #2cbe4e;
+  padding: 1em;
+}
+
+.container>div:nth-child(odd) {
+  background: #2e4e;
+}
+
+.puzzle_area {
+  display: grid;
+  grid-template-columns: 1fr 9fr 1fr;
+  align-items: center;
+  justify-items: center;
+}

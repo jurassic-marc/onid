@@ -1,6 +1,6 @@
 
 import requests
-from flask import Flask
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
@@ -10,7 +10,7 @@ board = "((5,3,0,0,7,0,0,0,0),(6,0,0,1,9,5,0,0,0),(0,9,8,0,0,0,0,6,0),\
 
 @app.route('/')
 def index():
-    return 'Hello World'
+    return render_template('index.html')
 
 @app.route('/puzzle/<board>')
 def puzzle_url(board):

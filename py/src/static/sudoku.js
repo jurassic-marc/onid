@@ -9,7 +9,14 @@ app.controller('sudokuCtrl', function($scope, $http) {
     board = cutBoard(extractBoard(), 9).map(i => {
       return "(".concat(i, ")");
     });
-    console.log(board);
+    $http.get("/solve/" + "(" + board + ")")
+      .then(function(response) {
+          var board = response.data;
+          console.log(board); 
+      },
+      function onError(response) {
+        alert("Sorry, there was a problem with your request.");
+      }
+   );
   }
-
 });//controller end

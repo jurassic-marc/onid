@@ -87,7 +87,7 @@
           <input id="(3,1)" type="text" name="" onblur="checkInput('(3,1)',9)"></input>
           <input id="(3,2)" type="text" name="" onblur="checkInput('(3,2)',9)"></input>
           <input id="(3,3)" type="text" name="rgt" onblur="checkInput('(3,3)',9)"></input>
-          <input id="(3,4)" type="text" name="" onblur="checkInput('(3,4)',)"></input>
+          <input id="(3,4)" type="text" name="" onblur="checkInput('(3,4)',9)"></input>
           <input id="(3,5)" type="text" name="" onblur="checkInput('(3,5)',9)"></input>
           <input id="(3,6)" type="text" name="rgt" onblur="checkInput('(3,6)',9)"></input>
           <input id="(3,7)" type="text" name="" onblur="checkInput('(3,7)',9)"></input>
@@ -96,15 +96,15 @@
         </div>
 
         <div id="row 4">
-          <input id="(4,1)" type="text" name="" onblur="checkInput('(4,1)',9)"></input>
-          <input id="(4,2)" type="text" name="" onblur="checkInput('(4,2)',9)"></input>
-          <input id="(4,3)" type="text" name="rgt" onblur="checkInput('(4,3)',9)"></input>
-          <input id="(4,4)" type="text" name="" onblur="checkInput('(4,4)',9)"></input>
-          <input id="(4,5)" type="text" name="" onblur="checkInput('(4,5)',9)"></input>
-          <input id="(4,6)" type="text" name="rgt" onblur="checkInput('(4,6)',9)"></input>
-          <input id="(4,7)" type="text" name="" onblur="checkInput('(4,7)',9)"></input>
-          <input id="(4,8)" type="text" name="" onblur="checkInput('(4,8)',9)"></input>
-          <input id="(4,9)" type="text" name="" onblur="checkInput('(4,9)',9)"></input>
+          <input id="(4,1)" type="text" name="top" onblur="checkInput('(4,1)',9)"></input>
+          <input id="(4,2)" type="text" name="top" onblur="checkInput('(4,2)',9)"></input>
+          <input id="(4,3)" type="text" name="top rgt" onblur="checkInput('(4,3)',9)"></input>
+          <input id="(4,4)" type="text" name="top" onblur="checkInput('(4,4)',9)"></input>
+          <input id="(4,5)" type="text" name="top" onblur="checkInput('(4,5)',9)"></input>
+          <input id="(4,6)" type="text" name="top rgt" onblur="checkInput('(4,6)',9)"></input>
+          <input id="(4,7)" type="text" name="top" onblur="checkInput('(4,7)',9)"></input>
+          <input id="(4,8)" type="text" name="top" onblur="checkInput('(4,8)',9)"></input>
+          <input id="(4,9)" type="text" name="top" onblur="checkInput('(4,9)',9)"></input>
         </div>
 
         <div id="row 5">
@@ -132,15 +132,15 @@
         </div>
 
         <div id="row 7">
-          <input id="(7,1)" type="text" name="" onblur="checkInput('(7,1)',9)"></input>
-          <input id="(7,2)" type="text" name="" onblur="checkInput('(7,2)',9)"></input>
-          <input id="(7,3)" type="text" name="rgt" onblur="checkInput('(7,3)',9)"></input>
-          <input id="(7,4)" type="text" name="" onblur="checkInput('(7,4)',9)"></input>
-          <input id="(7,5)" type="text" name="" onblur="checkInput('(7,5)',9)"></input>
-          <input id="(7,6)" type="text" name="rgt" onblur="checkInput('(7,6)',9)"></input>
-          <input id="(7,7)" type="text" name="" onblur="checkInput('(7,7)',9)"></input>
-          <input id="(7,8)" type="text" name="" onblur="checkInput('(7,8)',9)"></input>
-          <input id="(7,9)" type="text" name="" onblur="checkInput('(7,9)',9)"></input>
+          <input id="(7,1)" type="text" name="top" onblur="checkInput('(7,1)',9)"></input>
+          <input id="(7,2)" type="text" name="top" onblur="checkInput('(7,2)',9)"></input>
+          <input id="(7,3)" type="text" name="top rgt" onblur="checkInput('(7,3)',9)"></input>
+          <input id="(7,4)" type="text" name="top" onblur="checkInput('(7,4)',9)"></input>
+          <input id="(7,5)" type="text" name="top" onblur="checkInput('(7,5)',9)"></input>
+          <input id="(7,6)" type="text" name="top rgt" onblur="checkInput('(7,6)',9)"></input>
+          <input id="(7,7)" type="text" name="top" onblur="checkInput('(7,7)',9)"></input>
+          <input id="(7,8)" type="text" name="top" onblur="checkInput('(7,8)',9)"></input>
+          <input id="(7,9)" type="text" name="top" onblur="checkInput('(7,9)',9)"></input>
         </div>
 
         <div id="row 8">
@@ -176,9 +176,12 @@
     <div ng-app="sudoku" ng-controller="sudokuCtrl">
       <button ng-click="solveBoard()">SOLVE</button>
 
-      <footer>
-        <p>Sudoku &copy; 2019</p>
-      </footer>
+    <div ng-app="sudoku" ng-controller="sudokuCtrl">
+      <input type="text" id="puzzle_difficulty"></input>
+      <button ng-click="fetchPuzzle()">FETCH</button>
 
+    <footer>
+      <p>Sudoku &copy; 2019</p>
+    </footer>
 </body>
 </html>

@@ -15,6 +15,7 @@ app.controller('sudokuCtrl', function($scope, $http) {
           if (isSolution(response.data)) {
             overwriteBoard(objectifyBoard(cutBoard(board, 9),9));
             alert("Solution found.");
+            screenshotBoard();
           } else {
             alert("Solution not found.");
           }

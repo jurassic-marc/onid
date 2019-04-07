@@ -1,5 +1,7 @@
+/
 \1 /home/marc/git/onid/q/log/app.log
 \2 /home/marc/git/onid/q/log/app.err
+\
 
 mnip_d:get `:data/mnip_dict;
 
@@ -587,8 +589,8 @@ Qsolve_sudoku: {[b;mnip_d]
                 res: try_solve[b;mnip_d;] each key mnip_d;
                 res: first res[where 0h=type each res];
 
-                if[0=count res; ERROR "Stack issue: ",string res; :last res];
-                if[1b=first res; DEBUG "Solved matrix: ",string res; :last res];
-                :DEBUG "Solved matrix: ",string res; last res
+                if[0=count res; ERROR "Stack issue"; :(0b;());];
+                if[1b=first res; DEBUG "Solved"; :res];
+                DEBUG "Not solved"; :res;
                }[;mnip_d]
 

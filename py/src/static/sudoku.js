@@ -3,7 +3,7 @@
 $.getScript("../static/utils.js");
 
 var app = angular.module('sudoku', ['ngSanitize']);
-
+test=[];
 app.controller('sudokuCtrl', function($scope, $http) {
   $scope.solveBoard = function() {
     board = cutBoard(extractBoard(), 9).map(i => {
@@ -25,4 +25,19 @@ app.controller('sudokuCtrl', function($scope, $http) {
       }
    );
   }
+
+  $scope.fetchPuzzle = function() {
+    diff = document.getElementById("puzzle_difficulty").value;
+    console.log(diff);
+    $http.get("/puzzle/" + String(diff))
+      .then(function(response) {
+          var board = response.data;
+          overwriteBoard(objectifyBoard(cutBoard(board, 9),9));
+        },
+        function onError(response) {
+          alert("problem with your request.");
+        }
+      );
+}
+
 });//controller end

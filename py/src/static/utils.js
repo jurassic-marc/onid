@@ -70,3 +70,17 @@ screenshotBoard = function() {
     }
   });
 }
+
+checkInput = function(element_id, boardSize) {
+  if("" != String(document.getElementById(element_id).value)){
+    val = parseInt(String(document.getElementById(element_id).value));
+    if (val in [...Array(boardSize).keys()].map(i => i+1) && val!=0) {
+      document.getElementById(element_id).value = val;
+    } else {
+      document.getElementById(element_id).value = "";
+      alert("Please enter a number between 1 and " + String(boardSize) + ".");
+      }
+  }
+}
+
+

@@ -60,3 +60,13 @@ overwriteBoard = function(boardObj) {
     cell.attr("value", boardObj[i].val);
   }
 }
+
+//https://github.com/niklasvh/html2canvas/issues/1443
+screenshotBoard = function() {
+  var element = $("#board");
+  html2canvas(element, {
+    onrendered: function(canvas) {
+      window.open().document.write('<img src="'+canvas.toDataURL()+'"/>'); 
+    }
+  });
+}

@@ -11,8 +11,13 @@ app.controller('sudokuCtrl', function($scope, $http) {
     });
     $http.get("/solve/" + "(" + board + ")")
       .then(function(response) {
-          var board = response.data;
-          console.log(board); 
+          var board = parseBoard(response.data);
+          if (isSolution(response.data)) {
+            overwriteBoard(objectifyBoard(cutBoard(board, 9),9));
+            alert("Solution found.");
+          } else {
+            alert("Solution not found.");
+          }
       },
       function onError(response) {
         alert("Sorry, there was a problem with your request.");

@@ -121,3 +121,16 @@ eraseNumber = function(element_id) {
   var cell = angular.element(document.getElementById(element_id));
   cell.prop("value", "");
 }
+
+makeCluesImmutable = function(board, boardSize){
+   for(i = 0; i < boardSize; i++){
+     for(j = 0; j < boardSize; j++){
+       element_id = "(" + String(i+1) + "," + String(j+1) + ")";
+       var cell = angular.element(document.getElementById(element_id));
+       console.log(cell.attr("value"));
+       if("" != cell.attr("value")){
+         cell.attr("disabled", true);
+       }
+     }
+   }
+}

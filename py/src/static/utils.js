@@ -1,4 +1,7 @@
 
+var mouseEntry = true;
+var inputNum = 1;
+
 //https://stackoverflow.com/questions/8495687/split-array-into-chunks?page=1&tab=votes#tab-top
 cutBoard = function(boardList, boardSize) {
   var b = [];
@@ -83,4 +86,23 @@ checkInput = function(element_id, boardSize) {
   }
 }
 
+clickAction = function(element_id) {
+  if (this.mouseEntry == true) {
+    return inputNumber(element_id);
+  }
+}
 
+setEntry = function() {
+  if (this.mouseEntry == true) {
+    this.mouseEntry = false;
+  } else this.mouseEntry = true;
+}
+
+setInputNumber = function(val) {
+  this.inputNum = val;
+}
+
+inputNumber = function(element_id) {
+  var cell = angular.element(document.getElementById(element_id));
+  cell.prop("value", this.inputNum);
+}

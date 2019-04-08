@@ -14,7 +14,7 @@
 
 .play_bar {
   display: grid;
-  grid-template-columns: 9fr 2fr;
+  grid-template-columns: 3fr 1fr;
 }
 
 .number_bar ul {

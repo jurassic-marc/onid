@@ -61,3 +61,12 @@
   border-top: 3px solid #000;
   border-right: 3px solid #000;
 }
+
+input:disabled,
+input[type=text]{
+   color:black
+}
+
+input:disabled{
+  color:red
+}

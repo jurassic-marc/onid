@@ -1,4 +1,3 @@
-
 .container {
   display: grid;
 }
@@ -10,6 +9,19 @@
 
 .container>div:nth-child(odd) {
   background: #2e4e;
+}
+
+.board_selection_area {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-column-gap: 3em;
+  justify-items: center;
+}
+
+.board_option {
+  display: grid;
+  align-items: center;
+  justify-items: center;
 }
 
 .play_bar {
@@ -63,10 +75,10 @@
 }
 
 input:disabled,
-input[type=text]{
-   color:black
+input[type=text] {
+  color: black
 }
 
-input:disabled{
-  color:red
+input:disabled {
+  color: red
 }

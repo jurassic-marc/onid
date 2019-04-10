@@ -2,36 +2,33 @@ var mouseEntry = true;
 var keyboardEntry = false;
 var eraserSelected = false;
 var inputNum = 1;
-var cacheValue;
-var valuesCountDict = {
-  1: 0,
-  2: 0,
-  3: 0,
-  4: 0,
-  5: 0,
-  6: 0,
-  7: 0,
-  8: 0,
-  9: 0
-};
 
-isSolution = function(boardReturned) {
-  if ("1" == boardReturned[175]) {
-    return true;
-  } else {
-    return false;
+isKeyboardEntry = function(enable) {
+  $(document)[0].onkeydown = function() {
+    return enable;
+  }
+  return enable;
+}
+
+getDiffChoosen = function() {
+  diffElements = document.getElementsByName("puzzle_difficulty");
+  for (i = 0; i < diffElements.length; i++) {
+    if (diffElements[i].checked) {
+      return i + 1;
+    }
   }
 }
 
-isDiffNumOverwrite = function(originalValue, value) {
-  if (originalValue != value) {
-    return true;
-  } else {
-    return false;
-  }
+isSolution = function(boardReturned) {
+  return "1" == boardReturned[175]
+}
+
+isOverwriteValDiff = function(originalVal, overwriteVal) {
+  return originalVal != overwriteVal;
 }
 
 setEntry = function() {
+  this.eraserSelected = false;
   if (this.mouseEntry) {
     this.keyboardEntry = true;
     this.mouseEntry = false;
@@ -39,10 +36,9 @@ setEntry = function() {
     this.keyboardEntry = false;
     this.mouseEntry = true;
   }
-  this.eraserSelected = false;
 }
 
-setInputNumber = function(val) {
+setInputVal = function(val) {
   this.eraserSelected = false;
   this.inputNum = val;
 }
@@ -51,41 +47,87 @@ setEraser = function() {
   this.eraserSelected = true;
 }
 
-cacheOriginalValue = function(element_id) {
-  var cell = angular.element(document.getElementById(element_id));
-  this.cacheValue = cell.prop("value");
+getCell = function(element_id) {
+  return angular.element(document.getElementById(element_id));
 }
 
-updCellValue = function(element_id, value) {
-  var cell = angular.element(document.getElementById(element_id));
-  cell.prop("value", value);
+getCellVal = function(element_id) {
+  return getCell(element_id).prop("value");
 }
 
-updValuesCount = function(value, amount) {
-  if (0 <= this.valuesCountDict[value] + amount) {
-    this.valuesCountDict[value] += amount;
+setCellVal = function(cell, val) {
+  cell.attr("value", val);
+}
+
+updCellVal = function(cell, val) {
+  cell.prop("value", val);
+}
+
+getValsCount = function(boardSize) {
+  var valsCountDict = {
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+    7: 0,
+    8: 0,
+    9: 0
   };
-}
 
-getExhaustedValues = function(boardSize) {
-  var exhaustedValueArr = [];
-  for (val in valuesCountDict) {
-    if (valuesCountDict[val] >= boardSize) {
-      exhaustedValueArr.push(val);
+  for (i = 0; i < boardSize; i++) {
+    for (j = 0; j < boardSize; j++) {
+      var element_id = "\(" + i + "\," + j + "\)"
+      valsCountDict[getCellVal(element_id)] += 1;
     }
   }
-  return exhaustedValueArr;
+  return valsCountDict;
 }
 
-updExhaustedValues = function(exhaustedArr, boardSize) {
+getExhaustedVals = function(boardSize) {
+  var valsCountDict = getValsCount(boardSize);
+  exhaustedValArr = [];
+  for (val in valsCountDict) {
+    if (valsCountDict[val] >= boardSize) {
+      exhaustedValArr.push(val);
+    }
+  }
+  return exhaustedValArr;
+}
+
+updExhaustedVals = function(exhaustedValsArr, boardSize) {
   for (i = 1; i <= boardSize; i++) {
-    var numberCell = angular.element(document.getElementById("val-" + i));
-    if (i in exhaustedArr || i == exhaustedArr) {
-      numberCell.css("color", "red");
+    var numCell = getCell("val-" + i);
+    if (i in exhaustedValsArr || i == exhaustedValsArr) {
+      numCell.css("color", "red");
     } else {
-      numberCell.css("color", "black");
+      numCell.css("color", "black");
     }
   }
+}
+
+displayDiffDialogue = function(element_id) {
+  var element = $(document.getElementById(element_id));
+  element.prop({
+    hidden: false
+  });
+  element.dialog();
+}
+
+goToPage = function(uri_ext, base_uri = "http://localhost:5000/") {
+  $(document).ready(function() {
+    $.ajax({
+      type: 'GET',
+      url: base_uri + uri_ext,
+      success: function() {
+        location.href = base_uri + uri_ext;
+      },
+      error: function() {
+        alert("Sorry, there is a problem changing to " + base_uri + uri_ext + ".");
+      }
+    });
+  });
 }
 
 //https://stackoverflow.com/questions/8495687/split-array-into-chunks?page=1&tab=votes#tab-top
@@ -99,10 +141,10 @@ cutBoard = function(boardList, boardSize) {
 
 extractBoard = function() {
   b = [];
-  c = document.querySelector('#board').querySelectorAll('input');
-  for (i = 0; i < c.length; i++) {
-    v = c[i].value;
-    if (v == "") {
+  cells = document.querySelector('#board').querySelectorAll('input');
+  for (i = 0; i < cells.length; i++) {
+    cellVal = cells[i].value;
+    if (cellVal == "") {
       b.push("0");
     } else {
       b.push(v);
@@ -135,86 +177,57 @@ objectifyBoard = function(boardCut, boardSize) {
 
 overwriteBoard = function(boardObj) {
   for (i = 0; i < boardObj.length; i++) {
-    var cell = angular.element(document.getElementById("\(" + String(boardObj[i].row) +
-      "\," + String(boardObj[i].col) +
-      "\)"));
-    cell.attr("value", boardObj[i].val);
+    var element_id = "\(" + boardObj[i].row + "\," + boardObj[i].col + "\)";
+    setCellVal(getCell(element_id), boardObj[i].val);
   }
 }
 
 makeCluesImmutable = function(board, boardSize) {
-  for (i = 0; i < boardSize; i++) {
-    for (j = 0; j < boardSize; j++) {
-      element_id = "(" + String(i + 1) + "," + String(j + 1) + ")";
-      var cell = angular.element(document.getElementById(element_id));
-      if ("" != cell.attr("value")) {
-        cell.attr("disabled", true);
+  for (i = 1; i <= boardSize; i++) {
+    for (j = 1; j <= boardSize; j++) {
+      element_id = "(" + i + "," + j + ")";
+      if ("" != getCellVal(element_id)) {
+        getCell(element_id).attr("disabled", true);
       }
     }
   }
+}
+
+isInputValid = function(element_id, boardSize) {
+  var cellVal = getCellVal(element_id);
+  return "" == cellVal || cellVal in [...Array(boardSize + 1).keys()].map(i => i + 1) && cellVal != 0;
 }
 
 checkInput = function(element_id, boardSize) {
-  var cell = angular.element(document.getElementById(element_id));
-  var val = cell.prop("value");
-  if ("" == val || val in [...Array(boardSize + 1).keys()].map(i => i + 1) && val != 0) {
-    return [true, val];
+  if (isInputValid(element_id, boardSize)) {
+    updCellVal(getCell(element_id), getCellVal(element_id));
   } else {
-    alert("Please enter a number between 1 and " + String(boardSize) + ".");
-    return [false, "0"];
+    eraseValAndCount(element_id);
+    alert("Please enter a number between 1 and " + boardSize + ".");
   }
+  updExhaustedVals(getExhaustedVals(9), 9);
 }
 
-keyPressAction = function(element_id, boardSize) {
-  if (this.keyboardEntry) {
-    var inp = checkInput(element_id, boardSize);
-    if (inp[0]) {
-      if (isDiffNumOverwrite(this.cacheValue, inp[1])) {
-        updValuesCount(this.cacheValue, -1);
-        updCellValue(element_id, inp[1]);
-        updValuesCount(inp[1], 1);
-      }
-    }
-  }
-}
-
-eraseNumber = function(element_id) {
-  var cell = angular.element(document.getElementById(element_id));
-  cell.prop("value", "");
+eraseValAndCount = function(element_id) {
+  updCellVal(getCell(element_id), "")
 }
 
 clickAction = function(element_id) {
-  if (this.mouseEntry) {
-    mouseActionOnClick(element_id);
-  } else if (this.keyboardEntry) {
-    keyboardActionOnClick(element_id, 9);
-  }
   if (this.eraserSelected) {
     eraserActionOnClick(element_id);
+  } else if (!isKeyboardEntry(this.keyboardEntry)) {
+    mouseActionOnClick(element_id);
   }
-  updExhaustedValues(getExhaustedValues(9), 9);
 }
 
 mouseActionOnClick = function(element_id) {
-  var cell = angular.element(document.getElementById(element_id));
-  var val = cell.prop("value");
-  if (isDiffNumOverwrite(val, this.inputNum)) {
-    updValuesCount(val, -1);
-    updCellValue(element_id, this.inputNum);
-    updValuesCount(this.inputNum, 1);
+  if (isOverwriteValDiff(getCellVal(element_id), this.inputNum)) {
+    updCellVal(getCell(element_id), this.inputNum);
   }
 }
 
-keyboardActionOnClick = function(element_id, boardSize) {
-  cacheOriginalValue(element_id);
-  keyPressAction(element_id, boardSize);
-}
-
 eraserActionOnClick = function(element_id) {
-  var cell = angular.element(document.getElementById(element_id));
-  var val = cell.prop("value")
-  updValuesCount(val, -1);
-  eraseNumber(element_id);
+  eraseValAndCount(element_id);
 }
 
 //https://github.com/niklasvh/html2canvas/issues/1443

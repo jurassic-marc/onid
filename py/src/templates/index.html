@@ -1,189 +1,61 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta charset="utf-8">
   <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js" integrity="sha384-g5uSoOSBd7KkhAMlnQILrecXvzst9TdC09/VM+pjDTCM+1il8RHz5fKANTFFb+gQ" crossorigin="anonymous"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js" type="text/javascript"></script>
   <script type="text/javascript" src="../static/sudoku.js"></script>
   <script type="text/javascript" src="../static/utils.js"></script>
-  <link rel="stylesheet" href="../static/style.css" type="text/css">
-
-  <title>Sudoku</title>
+  <link type="text/css" rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
+  <link type="text/css" rel="stylesheet" href="../static/style.css">
+  <title>Home</title>
 </head>
 
 <body>
   <div class="container">
     <div class="header">
       <h1>TITLE</h1>
-      <div class="misc_bar">
-        <ul>
-          <li>Settings</li>
-          <li>Help</li>
-        </ul>
+    </div>
+
+    <div class="board_selection_area">
+      <div class="board_option">
+        <img id="API_board" class="fas fa-globe fa-5x" onclick="displayDiffDialogue('dialogue')"></img>
+        <p style="text-align: center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed, quis.</p>
+      </div>
+
+      <div class="board_option">
+        <img id="custom_board" class="fas fa-cogs fa-5x" onclick="goToPage('sudoku/0')"></img>
+        <p style="text-align: center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo, amet!</p>
       </div>
     </div>
 
-    <div class="play_bar">
-      <div class="number_bar">
-        <ul>
-          <input id="val-1" type="button" value="1" onclick="setInputNumber(1)"></input>
-          <input id="val-2" type="button" value="2" onclick="setInputNumber(2)"></input>
-          <input id="val-3" type="button" value="3" onclick="setInputNumber(3)"></input>
-          <input id="val-4" type="button" value="4" onclick="setInputNumber(4)"></input>
-          <input id="val-5" type="button" value="5" onclick="setInputNumber(5)"></input>
-          <input id="val-6" type="button" value="6" onclick="setInputNumber(6)"></input>
-          <input id="val-7" type="button" value="7" onclick="setInputNumber(7)"></input>
-          <input id="val-8" type="button" value="8" onclick="setInputNumber(8)"></input>
-          <input id="val-9" type="button" value="9" onclick="setInputNumber(9)"></input>
-      </div>
+    <div id="dialogue" title="Board Difficulty" hidden>
+      <fieldset>
+        <legend>Select a Difficulty:</legend>
+        <label>Easy</label>
+        <input name="puzzle_difficulty" type="radio"><br>
+        <label>Medium</label>
+        <input name="puzzle_difficulty" type="radio"><br>
+        <label>Hard</label>
+        <input name="puzzle_difficulty" type="radio">
+      </fieldset>
+      <button onclick="goToPage('sudoku/' + getDiffChoosen())">Fetch</button>
 
-      <div class="action_bar">
-        <ul>
-          <li>pencil</li>
-          <input id="eraser" type="button" value="rubber" onclick="setEraser()"></input>
-          <input id="entryMode" type="button" value="mouse/keyboard" onclick="setEntry()"></input>
-        </ul>
-      </div>
     </div>
 
-    <div class="puzzle_area">
-      <div class="banner">
-        <p>TEXT</p>
-      </div>
+    <script>
 
-      <div id="board" class="puzzle">
+    </script>
 
-        <div id="row 1">
-          <input id="(1,1)" type="text" name="" onclick="clickAction('(1,1)')" onblur="keyPressAction('(1,1)',9)" autocomplete="off"></input>
-          <input id="(1,2)" type="text" name="" onclick="clickAction('(1,2)')" onblur="keyPressAction('(1,2)',9)" autocomplete="off"></input>
-          <input id="(1,3)" type="text" name="rgt" onclick="clickAction('(1,3)')" onblur="keyPressAction('(1,3)',9)" autocomplete="off"></input>
-          <input id="(1,4)" type="text" name="" onclick="clickAction('(1,4)')" onblur="keyPressAction('(1,4)',9)" autocomplete="off"></input>
-          <input id="(1,5)" type="text" name="" onclick="clickAction('(1,5)')" onblur="keyPressAction('(1,5)',9)" autocomplete="off"></input>
-          <input id="(1,6)" type="text" name="rgt" onclick="clickAction('(1,6)')" onblur="keyPressAction('(1,6)',9)" autocomplete="off"></input>
-          <input id="(1,7)" type="text" name="" onclick="clickAction('(1,7)')" onblur="keyPressAction('(1,7)',9)" autocomplete="off"></input>
-          <input id="(1,8)" type="text" name="" onclick="clickAction('(1,8)')" onblur="keyPressAction('(1,8)',9)" autocomplete="off"></input>
-          <input id="(1,9)" type="text" name="" onclick="clickAction('(1,9)')" onblur="keyPressAction('(1,9)',9)" autocomplete="off"></input>
-        </div>
+    <footer>
+      <p>Sudoku &copy; 2019</p>
+    </footer>
+  </div>
 
-        <div id="row 2">
-          <input id="(2,1)" type="text" name="" onclick="clickAction('(2,1)')" onblur="keyPressAction('(2,1)',9)" autocomplete="off"></input>
-          <input id="(2,2)" type="text" name="" onclick="clickAction('(2,2)')" onblur="keyPressAction('(2,2)',9)" autocomplete="off"></input>
-          <input id="(2,3)" type="text" name="rgt" onclick="clickAction('(2,3)')" onblur="keyPressAction('(2,3)',9)" autocomplete="off"></input>
-          <input id="(2,4)" type="text" name="" onclick="clickAction('(2,4)')" onblur="keyPressAction('(2,4)',9)" autocomplete="off"></input>
-          <input id="(2,5)" type="text" name="" onclick="clickAction('(2,5)')" onblur="keyPressAction('(2,5)',9)" autocomplete="off"></input>
-          <input id="(2,6)" type="text" name="rgt" onclick="clickAction('(2,6)')" onblur="keyPressAction('(2,6)',9)" autocomplete="off"></input>
-          <input id="(2,7)" type="text" name="" onclick="clickAction('(2,7)')" onblur="keyPressAction('( 2,7)',9)" autocomplete="off"></input>
-          <input id="(2,8)" type="text" name="" onclick="clickAction('(2,8)')" onblur="keyPressAction('(2,8)',9)" autocomplete="off"></input>
-          <input id="(2,9)" type="text" name="" onclick="clickAction('(2,9)')" onblur="keyPressAction('(2,9)',9)" autocomplete="off"></input>
-        </div>
-
-        <div id="row 3">
-          <input id="(3,1)" type="text" name="" onclick="clickAction('(3,1)')" onblur="keyPressAction('(3,1)',9)" autocomplete="off"></input>
-          <input id="(3,2)" type="text" name="" onclick="clickAction('(3,2)')" onblur="keyPressAction('(3,2)',9)" autocomplete="off"></input>
-          <input id="(3,3)" type="text" name="rgt" onclick="clickAction('(3,3)')" onblur="keyPressAction('(3,3)',9)" autocomplete="off"></input>
-          <input id="(3,4)" type="text" name="" onclick="clickAction('(3,4)')" onblur="keyPressAction('(3,4)',9)" autocomplete="off"></input>
-          <input id="(3,5)" type="text" name="" onclick="clickAction('(3,5)')" onblur="keyPressAction('(3,5)',9)" autocomplete="off"></input>
-          <input id="(3,6)" type="text" name="rgt" onclick="clickAction('(3,6)')" onblur="keyPressAction('(3,6)',9)" autocomplete="off"></input>
-          <input id="(3,7)" type="text" name="" onclick="clickAction('(3,7)')" onblur="keyPressAction('(3,7)',9)" autocomplete="off"></input>
-          <input id="(3,8)" type="text" name="" onclick="clickAction('(3,8)')" onblur="keyPressAction('(3,8)',9)" autocomplete="off"></input>
-          <input id="(3,9)" type="text" name="" onclick="clickAction('(3,9)')" onblur="keyPressAction('( 3,9)',9)" autocomplete="off"></input>
-        </div>
-
-        <div id="row 4">
-          <input id="(4,1)" type="text" name="top" onclick="clickAction('(4,1)')" onblur="keyPressAction('(4,1)',9)" autocomplete="off"></input>
-          <input id="(4,2)" type="text" name="top" onclick="clickAction('(4,2)')" onblur="keyPressAction('(4,2)',9)" autocomplete="off"></input>
-          <input id="(4,3)" type="text" name="top rgt" onclick="clickAction('(4,3)')" onblur="keyPressAction('(4,3)',9)" autocomplete="off"></input>
-          <input id="(4,4)" type="text" name="top" onclick="clickAction('(4,4)')" onblur="keyPressAction('(4,4)',9)" autocomplete="off"></input>
-          <input id="(4,5)" type="text" name="top" onclick="clickAction('(4,5)')" onblur="keyPressAction('(4,5)',9)" autocomplete="off"></input>
-          <input id="(4,6)" type="text" name="top rgt" onclick="clickAction('(4,6)')" onblur="keyPressAction('(4,6)',9)" autocomplete="off"></input>
-          <input id="(4,7)" type="text" name="top" onclick="clickAction('(4,7)')" onblur="keyPressAction('(4,7)',9)" autocomplete="off"></input>
-          <input id="(4,8)" type="text" name="top" onclick="clickAction('(4,8)')" onblur="keyPressAction('(4,8)',9)" autocomplete="off"></input>
-          <input id="(4,9)" type="text" name="top" onclick="clickAction('(4,9)')" onblur="keyPressAction('( 4,9)',9)" autocomplete="off"></input>
-        </div>
-
-        <div id="row 5">
-          <input id="(5,1)" type="text" name="" onclick="clickAction('(5,1)')" onblur="keyPressAction('(5,1)',9)" autocomplete="off"></input>
-          <input id="(5,2)" type="text" name="" onclick="clickAction('(5,2)')" onblur="keyPressAction('(5,2)',9)" autocomplete="off"></input>
-          <input id="(5,3)" type="text" name="rgt" onclick="clickAction('(5,3)')" onblur="keyPressAction('(5,3)',9)" autocomplete="off"></input>
-          <input id="(5,4)" type="text" name="" onclick="clickAction('(5,4)')" onblur="keyPressAction('(5,4)',9)" autocomplete="off"></input>
-          <input id="(5,5)" type="text" name="" onclick="clickAction('(5,5)')" onblur="keyPressAction('(5,5)',9)" autocomplete="off"></input>
-          <input id="(5,6)" type="text" name="rgt" onclick="clickAction('(5,6)')" onblur="keyPressAction('( 5,6)',9)" autocomplete="off"></input>
-          <input id="(5,7)" type="text" name="" onclick="clickAction('(5,7)')" onblur="keyPressAction('(5,7)',9)" autocomplete="off"></input>
-          <input id="(5,8)" type="text" name="" onclick="clickAction('(5,8)')" onblur="keyPressAction('(5,8)',9)" autocomplete="off"></input>
-          <input id="(5,9)" type="text" name="" onclick="clickAction('(5,9)')" onblur="keyPressAction('(5,9)',9)" autocomplete="off"></input>
-        </div>
-
-        <div id="row 6">
-          <input id="(6,1)" type="text" name="" onclick="clickAction('(6,1)')" onblur="keyPressAction('(6,1)',9)" autocomplete="off"></input>
-          <input id="(6,2)" type="text" name="" onclick="clickAction('(6,2)')" onblur="keyPressAction('(6,2)',9)" autocomplete="off"></input>
-          <input id="(6,3)" type="text" name="rgt" onclick="clickAction('(6,3)')" onblur="keyPressAction('(6,3)',9)" autocomplete="off"></input>
-          <input id="(6,4)" type="text" name="" onclick="clickAction('(6,4)')" onblur="keyPressAction('(6,4)',9)" autocomplete="off"></input>
-          <input id="(6,5)" type="text" name="" onclick="clickAction('(6,5)')" onblur="keyPressAction('(6,5)',9)" autocomplete="off"></input>
-          <input id="(6,6)" type="text" name="rgt" onclick="clickAction('(6,6)')" onblur="keyPressAction('(6,6)',9)" autocomplete="off"></input>
-          <input id="(6,7)" type="text" name="" onclick="clickAction('(6,7)')" onblur="keyPressAction('(6,7)',9)" autocomplete="off"></input>
-          <input id="(6,8)" type="text" name="" onclick="clickAction('(6,8)')" onblur="keyPressAction('(6,8)',9)" autocomplete="off"></input>
-          <input id="(6,9)" type="text" name="" onclick="clickAction('(6,9)')" onblur="keyPressAction('(6,9)',9)" autocomplete="off"></input>
-        </div>
-
-        <div id="row 7">
-          <input id="(7,1)" type="text" name="top" onclick="clickAction('(7,1)')" onblur="keyPressAction('(7,1)',9)" autocomplete="off"></input>
-          <input id="(7,2)" type="text" name="top" onclick="clickAction('(7,2)')" onblur="keyPressAction('(7,2)',9)" autocomplete="off"></input>
-          <input id="(7,3)" type="text" name="top rgt" onclick="clickAction('(7,3)')" onblur="keyPressAction('(7,3)',9)" autocomplete="off"></input>
-          <input id="(7,4)" type="text" name="top" onclick="clickAction('(7,4)')" onblur="keyPressAction('(7,4)',9)" autocomplete="off"></input>
-          <input id="(7,5)" type="text" name="top" onclick="clickAction('(7,5)')" onblur="keyPressAction('(7,5)',9)" autocomplete="off"></input>
-          <input id="(7,6)" type="text" name="top rgt" onclick="clickAction('(7,6)')" onblur="keyPressAction('(7,6)',9)" autocomplete="off"></input>
-          <input id="(7,7)" type="text" name="top" onclick="clickAction('(7,7)')" onblur="keyPressAction('(7,7)',9)" autocomplete="off"></input>
-          <input id="(7,8)" type="text" name="top" onclick="clickAction('(7,8)')" onblur="keyPressAction('(7,8)',9)" autocomplete="off"></input>
-          <input id="(7,9)" type="text" name="top" onclick="clickAction('(7,9)')" onblur="keyPressAction('(7,9)',9)" autocomplete="off"></input>
-        </div>
-
-        <div id="row 8">
-          <input id="(8,1)" type="text" name="" onclick="clickAction('(8,1)')" onblur="keyPressAction('(8,1)',9)" autocomplete="off"></input>
-          <input id="(8,2)" type="text" name="" onclick="clickAction('(8,2)')" onblur="keyPressAction('(8,2)',9)" autocomplete="off"></input>
-          <input id="(8,3)" type="text" name="rgt" onclick="clickAction('(8,3)')" onblur="keyPressAction('(8,3)',9)" autocomplete="off"></input>
-          <input id="(8,4)" type="text" name="" onclick="clickAction('(8,4)')" onblur="keyPressAction('(8,4)',9)" autocomplete="off"></input>
-          <input id="(8,5)" type="text" name="" onclick="clickAction('(8,5)')" onblur="keyPressAction('(8,5)',9)" autocomplete="off"></input>
-          <input id="(8,6)" type="text" name="rgt" onclick="clickAction('(8,6)')" onblur="keyPressAction('(8,6)',9)" autocomplete="off"></input>
-          <input id="(8,7)" type="text" name="" onclick="clickAction('(8,7)')" onblur="keyPressAction('(8,7)',9)" autocomplete="off"></input>
-          <input id="(8,8)" type="text" name="" onclick="clickAction('(8,8)')" onblur="keyPressAction('(8,8)',9)" autocomplete="off"></input>
-          <input id="(8,9)" type="text" name="" onclick="clickAction('(8,9)')" onblur="keyPressAction('(8,9)',9)" autocomplete="off"></input>
-        </div>
-
-        <div id="row 9">
-          <input id="(9,1)" type="text" name="" onclick="clickAction('(9,1)')" onblur="keyPressAction('(9,1)',9)" autocomplete="off"></input>
-          <input id="(9,2)" type="text" name="" onclick="clickAction('(9,2)')" onblur="keyPressAction('(9,2)',9)" autocomplete="off"></input>
-          <input id="(9,3)" type="text" name="rgt" onclick="clickAction('(9,3)')" onblur="keyPressAction('(9,3)',9)" autocomplete="off"></input>
-          <input id="(9,4)" type="text" name="" onclick="clickAction('(9,4)')" onblur="keyPressAction('(9,4)',9)" autocomplete="off"></input>
-          <input id="(9,5)" type="text" name="" onclick="clickAction('(9,5)')" onblur="keyPressAction('(9,5)',9)" autocomplete="off"></input>
-          <input id="(9,6)" type="text" name="rgt" onclick="clickAction('(9,6)')" onblur="keyPressAction('(9,6)',9)" autocomplete="off"></input>
-          <input id="(9,7)" type="text" name="" onclick="clickAction('(9,7)')" onblur="keyPressAction('(9,7)',9)" autocomplete="off"></input>
-          <input id="(9,8)" type="text" name="" onclick="clickAction('(9,8)')" onblur="keyPressAction('(9,8)',9)" autocomplete="off"></input>
-          <input id="(9,9)" type="text" name="" onclick="clickAction('(9,9)')" onblur="keyPressAction('(9,9)',9)" autocomplete="off"></input>
-        </div>
-      </div>
-
-      <div class="banner">
-        <p>TEXT</p>
-      </div>
-    </div>
-
-    <div ng-app="sudoku" ng-controller="sudokuCtrl">
-      <button ng-click="solveBoard()">SOLVE</button>
-
-      <div ng-app="sudoku" ng-controller="sudokuCtrl">
-        <input type="text" id="puzzle_difficulty"></input>
-        <button ng-click="fetchPuzzle()">FETCH</button>
-
-        <footer>
-          <p>Sudoku &copy; 2019</p>
-        </footer>
 </body>
 
 </html>

@@ -17,23 +17,19 @@
 <script>
   $(document).ready(function() {
     drawSelectedVals(9);
-  });
-</script>
-<!--
-<script>
-  angular.element(function() {
-    board_diff = location.href[location.href.length - 1];
-    if (0 != board_diff) {
-      obj = angular.element(document.getElementById('root'))[0]
-      for (var key in obj) {
-        if (/^jQuery/.test(key)) {
-          obj[key].$scope.fetchPuzzle(board_diff);
+    angular.element(function() {
+      board_diff = location.href[location.href.length - 1];
+      if (0 != board_diff) {
+        obj = angular.element(document.getElementById('root'))[0]
+        for (var key in obj) {
+          if (/^jQuery/.test(key)) {
+            obj[key].$scope.fetchPuzzle(board_diff);
+          }
         }
       }
-    }
+    });
   });
 </script>
--->
 
 <body>
   <div id="root" class="container" ng-app="sudoku" ng-controller="sudokuCtrl">

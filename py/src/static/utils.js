@@ -10,6 +10,18 @@ isKeyboardEntry = function(enable) {
   return enable;
 }
 
+isBoardComplete = function(boardSize) {
+  for (i = 0; i < boardSize; i++) {
+    for (j = 0; j < boardSize; j++) {
+      var elementId = "\(" + i + "\," + j + "\)";
+      if (getCellVal(elementId) == 0) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 getDiffChoosen = function() {
   diffElements = document.getElementsByName("puzzle_difficulty");
   for (i = 0; i < diffElements.length; i++) {
@@ -27,7 +39,7 @@ isOverwriteValDiff = function(originalVal, overwriteVal) {
   return originalVal != overwriteVal;
 }
 
-setEntry = function() {
+setEntry = function(boardSize) {
   this.eraserSelected = false;
   if (this.mouseEntry) {
     this.keyboardEntry = true;
@@ -36,23 +48,26 @@ setEntry = function() {
     this.keyboardEntry = false;
     this.mouseEntry = true;
   }
+  drawInputMode();
 }
 
-setInputVal = function(val) {
+setInputVal = function(elementId, boardSize, val) {
   this.eraserSelected = false;
   this.inputNum = val;
+  drawSelectedVals(9);
 }
 
 setEraser = function() {
   this.eraserSelected = true;
+  drawEraser();
 }
 
-getCell = function(element_id) {
-  return angular.element(document.getElementById(element_id));
+getCell = function(elementId) {
+  return angular.element(document.getElementById(elementId));
 }
 
-getCellVal = function(element_id) {
-  return getCell(element_id).prop("value");
+getCellVal = function(elementId) {
+  return getCell(elementId).prop("value");
 }
 
 setCellVal = function(cell, val) {
@@ -78,8 +93,8 @@ getValsCount = function(boardSize) {
 
   for (i = 0; i < boardSize; i++) {
     for (j = 0; j < boardSize; j++) {
-      var element_id = "\(" + i + "\," + j + "\)"
-      valsCountDict[getCellVal(element_id)] += 1;
+      var elementId = "\(" + i + "\," + j + "\)"
+      valsCountDict[getCellVal(elementId)] += 1;
     }
   }
   return valsCountDict;
@@ -96,19 +111,53 @@ getExhaustedVals = function(boardSize) {
   return exhaustedValArr;
 }
 
-updExhaustedVals = function(exhaustedValsArr, boardSize) {
+drawExhaustedVals = function(exhaustedValsArr, boardSize) {
   for (i = 1; i <= boardSize; i++) {
     var numCell = getCell("val-" + i);
-    if (i in exhaustedValsArr || i == exhaustedValsArr) {
-      numCell.css("color", "red");
-    } else {
-      numCell.css("color", "black");
+    if (-1 != exhaustedValsArr.indexOf(String(i))) {
+      numCell.prop("class", "exhausted");
+    } else if (this.inputNum != i) {
+      numCell.prop("class", "unselected");
     }
   }
 }
 
-displayDiffDialogue = function(element_id) {
-  var element = $(document.getElementById(element_id));
+drawInputMode = function() {
+  if (this.mouseEntry) {
+    getCell("mouse/keyboard").prop("src", "../static/img/mouse.svg");
+  } else {
+    getCell("mouse/keyboard").prop("src", "../static/img/keyboard.svg");
+  }
+  getCell("mouse/keyboard").prop("class", "selected");
+  getCell("pencil").prop("class", "unselected");
+  getCell("eraser").prop("class", "unselected");
+}
+
+drawEraser = function() {
+  if (this.eraserSelected) {
+    getCell("eraser").prop("class", "selected");
+    getCell("pencil").prop("class", "unselected");
+    getCell("mouse/keyboard").prop("class", "unselected");
+  } else {
+    getCell("eraser").prop("class", "unselected");
+  }
+}
+
+drawSelectedVals = function(boardSize) {
+  var elementId = "val-" + this.inputNum;
+  if (getCell(elementId).prop("class") != "exhausted") {
+    getCell(elementId).prop("class", "selected");
+  };
+  for (i = 1; i <= boardSize; i++) {
+    numCellId = "val-" + i;
+    if (numCellId != elementId && getCell(numCellId).prop("class") != "exhausted") {
+      getCell(numCellId).prop("class", "unselected");
+    }
+  }
+}
+
+displayDiffDialogue = function(elementId) {
+  var element = $(document.getElementById(elementId));
   element.prop({
     hidden: false
   });
@@ -147,7 +196,7 @@ extractBoard = function() {
     if (cellVal == "") {
       b.push("0");
     } else {
-      b.push(v);
+      b.push(cellVal);
     };
   }
   return b;
@@ -177,57 +226,57 @@ objectifyBoard = function(boardCut, boardSize) {
 
 overwriteBoard = function(boardObj) {
   for (i = 0; i < boardObj.length; i++) {
-    var element_id = "\(" + boardObj[i].row + "\," + boardObj[i].col + "\)";
-    setCellVal(getCell(element_id), boardObj[i].val);
+    var elementId = "\(" + boardObj[i].row + "\," + boardObj[i].col + "\)";
+    setCellVal(getCell(elementId), boardObj[i].val);
   }
 }
 
 makeCluesImmutable = function(board, boardSize) {
   for (i = 1; i <= boardSize; i++) {
     for (j = 1; j <= boardSize; j++) {
-      element_id = "(" + i + "," + j + ")";
-      if ("" != getCellVal(element_id)) {
-        getCell(element_id).attr("disabled", true);
+      elementId = "(" + i + "," + j + ")";
+      if ("" != getCellVal(elementId)) {
+        getCell(elementId).attr("disabled", true);
       }
     }
   }
 }
 
-isInputValid = function(element_id, boardSize) {
-  var cellVal = getCellVal(element_id);
+isInputValid = function(elementId, boardSize) {
+  var cellVal = getCellVal(elementId);
   return "" == cellVal || cellVal in [...Array(boardSize + 1).keys()].map(i => i + 1) && cellVal != 0;
 }
 
-checkInput = function(element_id, boardSize) {
-  if (isInputValid(element_id, boardSize)) {
-    updCellVal(getCell(element_id), getCellVal(element_id));
+checkInput = function(elementId, boardSize) {
+  if (isInputValid(elementId, boardSize)) {
+    updCellVal(getCell(elementId), getCellVal(elementId));
   } else {
-    eraseValAndCount(element_id);
+    eraseValAndCount(elementId);
     alert("Please enter a number between 1 and " + boardSize + ".");
   }
-  updExhaustedVals(getExhaustedVals(9), 9);
+  drawExhaustedVals(getExhaustedVals(boardSize), boardSize);
 }
 
-eraseValAndCount = function(element_id) {
-  updCellVal(getCell(element_id), "")
+eraseValAndCount = function(elementId) {
+  updCellVal(getCell(elementId), "")
 }
 
-clickAction = function(element_id) {
+clickAction = function(elementId) {
   if (this.eraserSelected) {
-    eraserActionOnClick(element_id);
+    eraserActionOnClick(elementId);
   } else if (!isKeyboardEntry(this.keyboardEntry)) {
-    mouseActionOnClick(element_id);
+    mouseActionOnClick(elementId);
   }
 }
 
-mouseActionOnClick = function(element_id) {
-  if (isOverwriteValDiff(getCellVal(element_id), this.inputNum)) {
-    updCellVal(getCell(element_id), this.inputNum);
+mouseActionOnClick = function(elementId) {
+  if (isOverwriteValDiff(getCellVal(elementId), this.inputNum)) {
+    updCellVal(getCell(elementId), this.inputNum);
   }
 }
 
-eraserActionOnClick = function(element_id) {
-  eraseValAndCount(element_id);
+eraserActionOnClick = function(elementId) {
+  eraseValAndCount(elementId);
 }
 
 //https://github.com/niklasvh/html2canvas/issues/1443

@@ -17,45 +17,40 @@
 
 <body>
   <div class="container">
-    <div class="header">
-      <h1>TITLE</h1>
-    </div>
+    <div class="content_container">
+      <header>
+        <h3><a href="/">Sudoku Solver</a> </h3>
+      </header>
 
-    <div class="board_selection_area">
-      <div class="board_option">
-        <img id="API_board" class="fas fa-globe fa-5x" onclick="displayDiffDialogue('dialogue')"></img>
-        <p style="text-align: center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed, quis.</p>
+      <div class="board_selection_area">
+        <div class="board_option">
+          <img id="API_board" class="fas fa-globe fa-5x" onclick="displayDiffDialogue('dialogue')"></img>
+          <p style="text-align: center">Get a random 9x9: easy, medium or hard Sudoku puzzle.</p>
+        </div>
+
+        <div class="board_option">
+          <img id="custom_board" class="fas fa-cogs fa-5x" onclick="goToPage('sudoku/0')"></img>
+          <p style="text-align: center">Use a custom 9x9 Sudoku puzzle.</p>
+        </div>
       </div>
 
-      <div class="board_option">
-        <img id="custom_board" class="fas fa-cogs fa-5x" onclick="goToPage('sudoku/0')"></img>
-        <p style="text-align: center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo, amet!</p>
+      <div id="dialogue" title="Board Difficulty" hidden>
+        <fieldset>
+          <legend>Select a Difficulty:</legend>
+          <label>Easy</label>
+          <input name="puzzle_difficulty" type="radio"><br>
+          <label>Medium</label>
+          <input name="puzzle_difficulty" type="radio"><br>
+          <label>Hard</label>
+          <input name="puzzle_difficulty" type="radio">
+        </fieldset>
+        <button onclick="goToPage('sudoku/' + getDiffChoosen())">Fetch</button>
       </div>
     </div>
-
-    <div id="dialogue" title="Board Difficulty" hidden>
-      <fieldset>
-        <legend>Select a Difficulty:</legend>
-        <label>Easy</label>
-        <input name="puzzle_difficulty" type="radio"><br>
-        <label>Medium</label>
-        <input name="puzzle_difficulty" type="radio"><br>
-        <label>Hard</label>
-        <input name="puzzle_difficulty" type="radio">
-      </fieldset>
-      <button onclick="goToPage('sudoku/' + getDiffChoosen())">Fetch</button>
-
-    </div>
-
-    <script>
-
-    </script>
-
     <footer>
-      <p>Sudoku &copy; 2019</p>
+      <p>Sudoku Solver | Marc Templeton | UUJ 2019</p>
     </footer>
   </div>
-
 </body>
 
 </html>

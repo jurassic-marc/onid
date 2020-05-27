@@ -1,7 +1,7 @@
-/
-\1 /home/marc/git/onid/q/log/app.log
-\2 /home/marc/git/onid/q/log/app.err
-\
+
+\1 ./q/log/app.log
+\2 ./q/log/app.err
+
 
 mnip_d:get `:data/mnip_dict;
 
@@ -93,7 +93,7 @@ get_grid - function which decides which function to call to get the grid dependi
 \
 
 
-get_grid: {[b;x] $[1=count x; 
+get_grid: {[b;x] $[1=count x;
                    get_grid_by_grid_number[b;x];
                    get_grid_by_row_col[b;x]
                   ]}
@@ -111,7 +111,7 @@ get_grid_by_grid_number - function which returns the grid specified by the its g
 \
 
 
-get_grid_by_grid_number: {[b;g] r:floor(g-1)%r_size:get_grid_size[b][0]; 
+get_grid_by_grid_number: {[b;g] r:floor(g-1)%r_size:get_grid_size[b][0];
                                 c:(g-1)mod c_size:get_grid_size[b][1];
                                 :flip(flip b[(r_size*r)+til r_size])[(c_size*c)+til c_size]
                          }
@@ -154,7 +154,7 @@ missing_vals: {[b;x] digits: get_digits[b];
                        :digits[where not digits in x]
                       ]
               }
- 
+
 
 /
 missing_pos - function which returns the position of the missing Sudoku values from an inputed list
@@ -394,7 +394,7 @@ on and its inverse
 \
 
 try_again: {[b;r;c;cand_r;cand_v;v_s;c_s;mnip_r]
-            WARN "CON    | (",(string r),",",(string c),") VAL: ",string cand_v; 
+            WARN "CON    | (",(string r),",",(string c),") VAL: ",string cand_v;
             $[is_last_cand_val[cand_v;v_s];
               :bt[b;r;c;cand_r;v_s;c_s;mnip_r];
               :init[b;r;c;cand_r;v_s;c_s;mnip_r]
@@ -455,7 +455,7 @@ on and its inverse
 
 
 init: {[b;r;c;cand_r;v_s;c_s;mnip_r]
-       DEBUG "Init called"; 
+       DEBUG "Init called";
        if[is_cand_val_invalid[cand_v:next_val_in_list[cand_r[c-1];v_s;`p]];
                               :bt[b;r;c;cand_r;v_s;c_s;mnip_r]
          ];
@@ -593,4 +593,3 @@ Qsolve_sudoku: {[b;mnip_d]
                 if[1b=first res; DEBUG "Solved"; :res];
                 DEBUG "Not solved"; :res;
                }[;mnip_d]
-

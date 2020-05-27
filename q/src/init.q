@@ -1,5 +1,5 @@
 
-\l /home/marc/git/log4q/log4q.q
+\l /path/to/log4q/repo/log4q.q
 
-\l /home/marc/git/onid/q/src/src.q
-\l /home/marc/git/onid/q/src/src.p
+\l ./src/src.q
+\l ./src/src.p

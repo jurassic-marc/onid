@@ -1,10 +1,11 @@
-\l /home/marc/git/onid/q/src/src.q
-\l /home/marc/git/log4q/log4q.q
 
-TEST_DIR: ":/home/marc/git/onid/q/test/";
+\l ./src/src.q
+\l /path/to/log4q/repo/log4q.q
+
+TEST_DIR: (first system("pwd")),"/test/";
 TEST_DATA_DIR: TEST_DIR,"data/";
 
-test_9_by_9: get `$TEST_DATA_DIR,"pre_defined_board";
+test_9_by_9: get hsym `$TEST_DATA_DIR,"pre_defined_board";
 
 
 test_get_board_size_with_9_by_9_board: {[b] ex:(9;9); ac:get_board_size[b]; :ex~ac}[test_9_by_9]
@@ -148,12 +149,12 @@ try_again: {[b;r;c;cand_r;cand_v;v_s;c_s;mnip_r]
            }
 
 
-test_try_again_calling_init: {[b;r;c;cand_v;mnip_r] cand_r: get_row[b;r]; 
+test_try_again_calling_init: {[b;r;c;cand_v;mnip_r] cand_r: get_row[b;r];
                   v_s: missing_vals[b;cand_r]; c_s: missing_pos[b;cand_r];
                   ex:`init; ac:try_again[b;r;c;cand_r;cand_v;v_s;c_s;mnip_r]; :ex~ac}[(enlist 9#0),(enlist 1,8#0),7#(enlist 9#0);1;1;1;{reverse reverse}]
 
 test_try_again_calling_bt: {[b;r;c;cand_v;mnip_r] cand_r: get_row[b;r];
-                  v_s: missing_vals[b;cand_r]; c_s: missing_pos[b;cand_r]; 
+                  v_s: missing_vals[b;cand_r]; c_s: missing_pos[b;cand_r];
                   ex:`bt; ac:try_again[b;r;c;cand_r;cand_v;v_s;c_s;mnip_r]; :ex~ac}[(enlist 9#0),(enlist 9,8#0),7#(enlist 9#0);1;1;9;{reverse reverse}]
 
 
@@ -171,16 +172,16 @@ try_next: {[b;r_s;c_s;r;c;cand_r;cand_v;mnip_r]
           }
 
 
-test_try_next_when_row_not_complete: {[b;r;c;cand_v;mnip_r] 
-                     r_s: get_rows_with_zero[b]; cand_r: get_row[b;r]; 
+test_try_next_when_row_not_complete: {[b;r;c;cand_v;mnip_r]
+                     r_s: get_rows_with_zero[b]; cand_r: get_row[b;r];
                      c_s: missing_pos[b;cand_r];
                      ex: (1;9); ac:try_next[b;r_s;c_s;r;c;cand_r;cand_v;mnip_d];
                      :ex~ac;
                     }[(enlist (1+til 7),2#0),8#(enlist 9#0);1;8;8;{reverse reverse}]
 
-test_try_next_when_row_complete: {[b;r;c;cand_v;mnip_r] 
-                     r_s: get_rows_with_zero[b]; cand_r: get_row[b;r]; 
-                     c_s: missing_pos[b;cand_r]; 
+test_try_next_when_row_complete: {[b;r;c;cand_v;mnip_r]
+                     r_s: get_rows_with_zero[b]; cand_r: get_row[b;r];
+                     c_s: missing_pos[b;cand_r];
                      ex: (2;1); ac:try_next[b;r_s;c_s;r;c;cand_r;cand_v;mnip_d];
                      :ex~ac;
                     }[(enlist (1+til 8),0),8#(enlist 9#0);1;9;9;{reverse reverse}]
@@ -199,7 +200,7 @@ init: {[b;r;c;cand_r;v_s;c_s;mnip_r]
       }
 
 
-test_init_when_bt_is_called: {[b;r;c;mnip_r] cand_r:get_row[b;r]; 
+test_init_when_bt_is_called: {[b;r;c;mnip_r] cand_r:get_row[b;r];
                    v_s: missing_vals[b;cand_r]; c_s: missing_pos[b;cand_r];
                    ex:`bt; ac:init[b;r;c;cand_r;v_s;c_s;mnip_r];
                    :ex~ac;

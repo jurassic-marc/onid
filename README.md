@@ -30,6 +30,7 @@ The dissertation submitted with this code base is found in `./report/dissertatio
 _The application currently solves 94.5% of valid puzzles suppled to it._
 
 <br>
+
 This application allows users to [play 9x9 Sudoku puzzles](#playing-sudoku) through its front-end website. However, its main feature is its ability to [solve and check solutions](#solving-sudoku) through its back-end algorithm engine.
 
 #### Playing Sudoku
@@ -163,7 +164,7 @@ In `./q/src/init.q` and `./q/test/test.q` change the placeholder path to your sp
 
 To run this application *both* the front-end Flask server and the back-end q server must be running.
 
-> Note: the [q server](#bring-up-the-q-server) and [Flask server](bring-up-the-flask-server) run in the foreground so 2 terminal tabs are required.
+> Note: the [q server](#bring-up-the-q-server) and [Flask server](#bring-up-the-flask-server) run in the foreground so 2 terminal tabs are required.
 
 <br>
 
@@ -185,7 +186,7 @@ sh ./bin/launch.sh
 <br>
 
 
-#### Bring up the Flask servers
+#### Bring up the Flask server
 ___
 1. Change into the py folder
 ```
